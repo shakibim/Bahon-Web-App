@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fare Settings</title>
+    
+    <!-- Firebase SDK - Add type="module" to use ES Modules -->
+    <script type="module">
+      // Firebase config (replace with your own values)
+      const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+      // Import Firebase modules
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js';
+      import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js';
+  
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+  
+      // Function to load fare from Firestore
+      async function loadFare() {
+        const farePerKmInput = document.getElementById('farePerKM');
+        try {
+          const docRef = doc(db, 'farePerKm', '266565');
+          const docSnap = await getDoc(docRef);
+  
+          if (docSnap.exists()) {
+            farePerKmInput.value = docSnap.data().fpk;  // Set the fare value
+          } else {
+            console.log('No document found!');
+          }
+        } catch (error) {
+          console.log('Error getting document:', error);
+        }
+      }
+  
+      // Function to show the toast message
+      function showToast(message, color) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${color}`;
+  toast.innerHTML = `<strong>${message}</strong>`; // Bold text
+  document.body.appendChild(toast);
+
+  // Remove the toast after 3 seconds
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+  
+      // Function to save fare to Firestore
+      async function saveFare(event) {
+        event.preventDefault();  // Prevent form submission
+        
+        const farePerKmInput = document.getElementById('farePerKM');
+        const updatedFare = parseInt(farePerKmInput.value);
+        
+        // Check if it's a valid number
+        if (isNaN(updatedFare)) {
+          alert('Please enter a valid number for the fare');
+          return;
+        }
+
+        console.log('Fare value before saving:', updatedFare, typeof updatedFare); // Check type
+        
+        try {
+          const docRef = doc(db, 'farePerKm', '266565');
+          await updateDoc(docRef, { fpk: updatedFare });  // Update Firestore document
+          
+          // Show green toast when update is successful
+          showToast('Fare updated successfully!', 'green');
+        } catch (error) {
+          console.error('Error updating document:', error);
+        }
+      }
+  
+      // Function to cancel the edit and reload fare
+      function cancelEdit() {
+        loadFare();  // Reload the fare value from Firestore
+      }
+     
+      // Initialize by loading the fare value when the page is loaded
+      window.onload = loadFare;
+      window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('saveButton').addEventListener('click', saveFare);
+        document.getElementById('cancelButton').addEventListener('click', cancelEdit);
+      });
+    </script>
+
+<style>
+  /* Toast Styles */
+  .toast {
+    position: fixed;
+    bottom: 600px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: medium;
+    border-radius: 5px;
+    opacity: 0;
+    animation: fadeInOut 5s forwards;
+  }
+
+  .toast.green {
+    background-color: #28a745;
+  }
+
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+</style>
+
+  </head>
+
+  <body
+    x-data="{ page: 'settings', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+    x-init="
+          darkMode = JSON.parse(localStorage.getItem('darkMode'));
+          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    :class="{'dark text-bodydark bg-boxdark-2': darkMode === true}"
+  >
+    <!-- ===== Preloader Start ===== -->
+    <include src="./partials/preloader.html"></include>
+    <!-- ===== Preloader End ===== -->
+
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- ===== Sidebar Start ===== -->
+      <include src="./partials/sidebar.html"></include>
+      <!-- ===== Sidebar End ===== -->
+
+      <!-- ===== Content Area Start ===== -->
+      <div
+        class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden"
+      >
+        <!-- ===== Header Start ===== -->
+        <include src="./partials/header.html" />
+        <!-- ===== Header End ===== -->
+
+        <!-- ===== Main Content Start ===== -->
+        <main>
+          <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+            <div class="mx-auto max-w-270">
+              <!-- Breadcrumb Start -->
+              <div
+                class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <h2 class="text-title-md2 font-bold text-black dark:text-white">
+                  Fare Settings 
+                </h2>
+              </div>
+              <!-- Breadcrumb End -->
+
+              <!-- ====== Settings Section Start ===== -->
+              <div class="grid grid-cols-5 gap-8">
+                <div class="col-span-5 xl:col-span-3">
+                  <div
+                    class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+                  >
+                    <div
+                      class="border-b border-stroke px-7 py-4 dark:border-strokedark"
+                    >
+                      <h3 class="font-medium text-[#015FC9] dark:text-white">
+                        Set Per Kilometers fare
+                      </h3>
+                    </div>
+                    <div class="p-7">
+                      <form action="#">
+                        <!-- Label -->
+                        <label
+                          class="mb-3 block text-sm font-medium text-black dark:text-white"
+                          for="farePerKM"
+                        >
+                          Fare/KM
+                        </label>
+                    
+                        <!-- Input and Buttons Row -->
+                        <div class="flex items-center gap-4">
+                          <!-- Input Field -->
+                          <div class="flex-grow">
+                            <input
+                              class="w-full h-[42px] rounded border border-stroke bg-gray px-4 font-medium text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                              type="text"
+                              name="farePerKM"
+                              id="farePerKM"
+                              placeholder="Enter fare"
+                            />
+                          </div>
+                    
+                          <!-- Buttons -->
+                          <div class="flex gap-4">
+                            <button  class="h-[42px] rounded border border-stroke px-4 text-sm font-medium text-black hover:shadow-1 id="cancelButton" type="button">Cancel</button>
+    <button  class="h-[42px] rounded bg-[#015FC9] px-4 text-sm font-medium text-white hover:bg-opacity-90"
+     id="saveButton" type="button">Save</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Settings Section End -->
+            </div>
+          </div>
+        </main>
+        <!-- ===== Main Content End ===== -->
+      </div>
+      <!-- ===== Content Area End ===== -->
+    </div>
+    <!-- ===== Page Wrapper End ===== -->
+  </body>
+</html>

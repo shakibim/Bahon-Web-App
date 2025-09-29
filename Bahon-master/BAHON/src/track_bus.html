@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahon - Revenue Report</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Firebase SDK (Using ES Modules) -->
+  <script type="module">
+    // Firebase Configuration
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Reverse Geocoding API (Replace YOUR_OPENCAGE_API_KEY with your OpenCage API Key)
+    async function reverseGeocode(lat, lon) {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const data = await response.json();
+      if (data && data.display_name) {
+        return data.display_name; // The readable location name from OSM
+      }
+      return "Location not found /Bus is not on Journey";
+    }
+
+    // Function to fetch the latest location data without indexing
+    function fetchLatestLocation() {
+      const locationRef = ref(database, 'processed_location_table');
+
+      // Fetch all data from the processed_location_table
+      get(locationRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+
+          // Find the record with the maximum entry_no
+          let latestEntry = null;
+          let maxEntryNo = -Infinity;
+
+          for (const key in data) {
+            if (data[key].entry_no > maxEntryNo) {
+              maxEntryNo = data[key].entry_no;
+              latestEntry = data[key];
+            }
+          }
+
+          if (latestEntry) {
+            const { lat, lon } = latestEntry;
+
+            console.log('Latest data:', latestEntry); // Debugging: Log the latest data
+
+            // Reverse geocode the coordinates to get the location name
+            reverseGeocode(lat, lon).then((locationName) => {
+              document.getElementById('locationName').innerText = `Current Location: ${locationName}`;
+
+              // Initialize the Leaflet map
+              const map = L.map('map').setView([lat, lon], 13);
+
+              // Add OpenStreetMap tile layer
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              }).addTo(map);
+
+              // Add marker at the location
+              L.marker([lat, lon]).addTo(map)
+                .bindPopup(`<b>Current Location</b><br>Lat: ${lat}<br>Lon: ${lon}`)
+                .openPopup();
+            });
+          } else {
+            document.getElementById('locationName').innerText = 'No location data available/ Bus is not on Journey';
+          }
+        } else {
+          console.log('No data found in Firebase!');
+          document.getElementById('locationName').innerText = 'No location data available/ Bus is not on Journey';
+        }
+      }).catch((error) => {
+        console.error('Error fetching location data:', error);
+      });
+    }
+
+    // Fetch the latest location on page load
+    fetchLatestLocation();
+
+
+    
+  </script>
+</head>
+
+<body>
+  
+  <include src="./partials/preloader.html"></include>
+  <!-- ===== Preloader End ===== -->
+
+  <!-- ===== Page Wrapper Start ===== -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- ===== Sidebar Start ===== -->
+    <include src="./partials/sidebar.html"></include>
+    <!-- ===== Sidebar End ===== -->
+
+    <!-- ===== Content Area Start ===== -->
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <!-- ===== Header Start ===== -->
+      <include src="./partials/header.html" />
+
+  <div class="flex h-screen overflow-hidden">
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <main>
+        <div class="mx-auto max-w-screen-2xl p-4 md:p-6">
+          <h2 class="text-title-md2 font-bold text-black" style="margin-bottom: 30px;">Track Bus</h2>
+          <div class="rounded-[20px] border bg-white px-6 py-4 shadow-md" style="margin-top: 20px;">
+            <h4 class="text-xl font-bold text-[#015FC9]">Current Location</h4>
+            <div id="locationName" class="text-17px font-medium" style="color: rgb(6, 151, 1);">Loading location...</div>
+            <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+          </div>
+        </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

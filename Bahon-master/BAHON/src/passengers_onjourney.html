@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahon - Revenue Report</title>
+  <style>
+    .table-header,
+    .table-row {
+      width: 100%;
+    }
+
+    .table-header h5 {
+      text-align: center;
+      font-size: 13px;
+      font-weight: bold;
+      color: #015FC9; /* Blue color for column titles */
+    }
+
+    
+
+    
+  </style>
+</head>
+
+<body
+  x-data="{ page: 'tables', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+  x-init="darkMode = JSON.parse(localStorage.getItem('darkMode'));
+          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark text-bodydark bg-[#DCE8FE]': darkMode === true}">
+
+  <include src="./partials/preloader.html"></include>
+  <!-- ===== Preloader End ===== -->
+
+  <!-- ===== Page Wrapper Start ===== -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- ===== Sidebar Start ===== -->
+    <include src="./partials/sidebar.html"></include>
+    <!-- ===== Sidebar End ===== -->
+
+    <!-- ===== Content Area Start ===== -->
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <!-- ===== Header Start ===== -->
+      <include src="./partials/header.html" />
+      <!-- Page Content -->
+      <div class="flex h-screen overflow-hidden">
+        <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <main>
+            <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+              <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <h2 class="text-title-md2 font-bold text-black dark:text-white">
+                  Passengers Onboard
+                </h2>
+              </div>
+
+              <div class="rounded-[20px] border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+                <h4 class="mb-6 text-xl font-bold text-black dark:text-white w-full text-left">Current Passengers</h4>
+                <div class="overflow-x-auto">
+                  <div class="grid grid-cols-12 gap-2 rounded-[5px] bg-gray text-black dark:bg-meta-4 sm:grid-cols-12 sm:gap-2">
+                    <div class="table-header p-2 text-center col-span-3 sm:col-span-3 md:col-span-3">
+                      <h5 class="text-xs font-bold sm:text-sm">Passenger Name</h5>
+                    </div>
+                    <div class="table-header p-2 text-center col-span-3 sm:col-span-3 md:col-span-3">
+                      <h5 class="text-xs font-bold sm:text-sm">Card No</h5>
+                    </div>
+                    <div class="table-header p-2 text-center col-span-3 sm:col-span-3 md:col-span-3">
+                      <h5 class="text-xs font-bold sm:text-sm">Entry Time</h5>
+                    </div>
+                    <div class="table-header p-2 text-center col-span-3 sm:col-span-3 md:col-span-3">
+                      <h5 class="text-xs font-bold sm:text-sm">Entry Location</h5>
+                    </div>
+                  </div>
+                  <div class="monthly-revenue"></div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js';
+    import { getFirestore, collection, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js';
+    import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js';
+  
+    // Firebase Configuration
+   const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const realtimeDb = getDatabase(app);
+  
+    // Fetch and Display Passengers on Journey
+    const renderedRows = {}; // Track existing rows by user ID
+
+async function fetchPassengersOnJourney() {
+  try {
+    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const tableBody = document.querySelector('.monthly-revenue');
+
+    usersSnapshot.forEach(async (doc) => {
+      const user = doc.data();
+      const { name, card_no: cardNo, onjourney } = user;
+
+      if (onjourney) {
+        const processedSnapshot = await get(ref(realtimeDb, 'processed_scanned_card'));
+        let entryTime = "N/A";
+        let entryLocation = "N/A";
+
+        if (processedSnapshot.exists()) {
+          const processedData = processedSnapshot.val();
+          let latestEntry = null;
+
+          for (const id in processedData) {
+            const record = processedData[id];
+            if (record.status === 'entry' && record.uid === doc.id) {
+              if (!latestEntry || record.timestamp._seconds > latestEntry.timestamp._seconds) {
+                latestEntry = record;
+              }
+            }
+          }
+
+          if (latestEntry) {
+    const timestamp = new Date(latestEntry.timestamp._seconds * 1000);
+    const options = { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric', 
+        hour: 'numeric', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: true 
+    };
+    entryTime = timestamp.toLocaleString('en-GB', options);
+    entryLocation = await reverseGeocode(latestEntry.location.lat, latestEntry.location.lon);
+}
+        }
+
+        // Check if the row already exists
+        if (renderedRows[doc.id]) {
+          // Update the existing row
+          const row = renderedRows[doc.id];
+          row.querySelector('.entry-time').textContent = entryTime;
+          row.querySelector('.entry-location').textContent = entryLocation;
+        } else {
+          // Create a new row
+          const row = document.createElement('div');
+          row.classList.add('table-row', 'grid', 'text-center', 'grid-cols-12', 'gap-2', 'border-b', 'border-stroke', 'dark:border-strokedark');
+          row.dataset.id = doc.id; // Use doc.id as a unique identifier
+          row.innerHTML = `
+            <div class="p-2 col-span-3 text-center text-[14px] font-bold text-[#015FC9]">${name}</div>
+            <div class="p-2 col-span-3 text-center text-[14px] font-bold text-[#015FC9]">${cardNo}</div>
+            <div class="p-2 col-span-3 text-center text-[14px] font-bold text-[#3CB043] entry-time">${entryTime}</div>
+            <div class="p-2 col-span-3 text-center text-[15px] font-bold text-[#3CB043] entry-location">${entryLocation}</div>
+          `;
+          tableBody.appendChild(row);
+          renderedRows[doc.id] = row; // Track the row
+        }
+      } else {
+        // Remove the row if the user is no longer on a journey
+        if (renderedRows[doc.id]) {
+          renderedRows[doc.id].remove();
+          delete renderedRows[doc.id];
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching passengers on journey:", error);
+  }}
+  
+    async function reverseGeocode(lat, lon) {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Failed to fetch location data");
+        }
+        const data = await response.json();
+  
+        const { road, suburb, city, town, state } = data.address;
+        let locationParts = [];
+        if (road) locationParts.push(road);
+        if (suburb) locationParts.push(suburb);
+        if (city) locationParts.push(city);
+        if (town) locationParts.push(town);
+        if (state) locationParts.push(state);
+  
+        const formattedLocation = locationParts.slice(0, 3).join(", ") || data.display_name;
+        return formattedLocation;
+      } catch (error) {
+        console.error("Error reverse geocoding:", error);
+        return "Unknown Location";
+      }
+    }
+  
+    function listenForOnJourneyChanges() {
+      try {
+        // Listen for changes in the `users` collection in Firestore
+        onSnapshot(collection(db, 'users'), (usersSnapshot) => {
+          let reloadRequired = false;
+  
+          // Check if `onjourney` field has changed for any user
+          usersSnapshot.forEach((doc) => {
+            const user = doc.data();
+            const { onjourney } = user;
+  
+            if (onjourney) {
+              reloadRequired = true;
+            }
+          });
+  
+          if (reloadRequired) {
+            // Refresh data when `onjourney` changes
+            fetchPassengersOnJourney();
+          } else {
+            // If no users are on a journey, clear the table
+            document.querySelector('.monthly-revenue').innerHTML = '';
+          }
+        });
+      } catch (error) {
+        console.error("Error listening for onjourney changes:", error);
+      }
+    }
+    
+    
+
+// Call the function
+
+
+
+    // Call the function to start listening
+    listenForOnJourneyChanges();
+  
+    // Fetch data on page load
+   
+  
+  </script>
+</body>
+
+</html>

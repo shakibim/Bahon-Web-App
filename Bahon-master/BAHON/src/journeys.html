@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahon - Journey List</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body
+  x-data="{ page: 'tables', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+  x-init="
+          darkMode = JSON.parse(localStorage.getItem('darkMode'));
+          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark text-bodydark bg-[#DCE8FE]': darkMode === true}">
+  <!-- ===== Preloader Start ===== -->
+  <include src="./partials/preloader.html"></include>
+  <!-- ===== Preloader End ===== -->
+
+  <!-- ===== Page Wrapper Start ===== -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- ===== Sidebar Start ===== -->
+    <include src="./partials/sidebar.html"></include>
+    <!-- ===== Sidebar End ===== -->
+
+    <!-- ===== Content Area Start ===== -->
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <!-- ===== Header Start ===== -->
+      <include src="./partials/header.html" />
+      <!-- ===== Header End ===== -->
+
+      <!-- ===== Main Content Start ===== -->
+      <main>
+        <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+          <!-- Breadcrumb Start -->
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-title-md2 font-bold text-black dark:text-white">
+              All Journeys
+            </h2>
+            <div class="flex items-center gap-2">
+              <input type="date" id="datePicker" class="p-2 border rounded-lg dark:bg-boxdark dark:border-strokedark dark:text-white">
+              <button id="showAll" class="rounded-lg bg-[#015FC9] px-3 py-1 text-sm font-semibold text-white hover:bg-blue-800">All</button>
+            </div>
+          </div>
+          <!-- Breadcrumb End -->
+
+          <!-- ====== Table Section Start -->
+          <div class="flex flex-col gap-10">
+            <!-- ====== Table One Start -->
+            <div
+              class="rounded-[20px] border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+              <h4 class="mb-6 text-xl font-bold text-black dark:text-white">Journey List</h4>
+
+              <div class="flex flex-col">
+                <!-- Table Header -->
+                <div class="overflow-x-auto">
+                  <div
+                    class="grid grid-cols-3 gap-1 rounded-[5px] bg-gray text-black dark:bg-meta-4 sm:grid-cols-12 sm:gap-2">
+                    <div class="p-2 text-center">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Serial</h5>
+                    </div>
+                    <div class="p-2 text-center">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Passenger Name</h5>
+                    </div>
+                    <div class="p-2 text-center">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Card Number</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Entry Point</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Entry Time</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Exit Point</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Exit Time</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Distance</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Time</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Fare per KM</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Fare</h5>
+                    </div>
+                    <div class="p-2 text-center hidden sm:block">
+                      <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm"></h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="journey-list">
+                  <!-- Rows will be added dynamically here from Firebase -->
+                </div>
+
+
+
+                <script type="module">
+                  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js';
+                  import { getFirestore, collection, query, orderBy, onSnapshot, where } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js';
+                
+                  // Firebase Configuration
+                  const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+                  // Initialize Firebase
+                  const app = initializeApp(firebaseConfig);
+                  const db = getFirestore(app);
+                
+                
+                  let selectedDate=null;
+                  
+
+                  // Function to Fetch and Display Journey Data
+                  function fetchJourneys(selectedDate) {
+                    const usersRef = collection(db, 'users');
+                    let indx = 0;
+                
+                    // Listen to changes in the 'users' collection
+                    onSnapshot(usersRef, (querySnapshot) => {
+                      querySnapshot.forEach((userDoc) => {
+                        // For each user, fetch their 'journeys' subcollection
+                        const journeysRef = collection(userDoc.ref, 'journeys');
+                        let q = query(journeysRef, orderBy('entry_time._seconds', 'desc'));
+                
+                        // If a date is selected, filter the journeys by the entry_time (date)
+                        if (selectedDate) {
+                          const startOfDay = new Date(selectedDate);
+                          startOfDay.setHours(0, 0, 0, 0);
+                          const endOfDay = new Date(selectedDate);
+                          endOfDay.setHours(23, 59, 59, 999);
+                
+                          const startTimestamp = Math.floor(startOfDay.getTime() / 1000);
+                          const endTimestamp = Math.floor(endOfDay.getTime() / 1000);
+                
+                          // Apply the date filtering using the where clause
+                          q = query(journeysRef, 
+                            where('entry_time._seconds', '>=', startTimestamp), 
+                            where('entry_time._seconds', '<=', endTimestamp), 
+                            orderBy('entry_time._seconds', 'desc')
+                          );
+                        }
+
+
+                        // Listen to changes in the 'journeys' subcollection
+                        onSnapshot(q, (journeySnapshot) => {
+                          journeySnapshot.forEach(async (journeyDoc) => {
+                            
+                            const journeyData = journeyDoc.data();
+                            const entryTime = new Date(journeyData.entry_time._seconds * 1000); // Convert to JavaScript Date object
+                            const formattedEntryTime2 = entryTime.toLocaleString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: true
+                            });
+                            // Format the entry time to match the desired format (with full date, time, and timezone info)
+                            const formattedEntryTime = entryTime.toLocaleString('en-US', {
+                              weekday: 'long', // Full weekday (e.g., "Thursday")
+                              year: 'numeric',
+                              month: 'long', // Full month name (e.g., "November")
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              second: 'numeric',
+                              hour12: true, // Use 12-hour clock
+                              timeZoneName: 'short' // Show the timezone (e.g., "GMT+6")
+                            });
+                            const exitTime = journeyData.exit_time.toDate();
+                            const formattedExitTime2 = exitTime.toLocaleString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: true
+                            });
+                            const formattedExitTime = exitTime.toLocaleString('en-GB', {
+                              weekday: 'long', // Full weekday (e.g., "Monday")
+                              year: 'numeric',
+                              month: 'long', // Full month name (e.g., "November")
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: 'numeric',
+                              second: 'numeric',
+                              hour12: true, // Use 12-hour clock
+                              timeZoneName: 'short' // Show the timezone (e.g., "UTC+6")
+                            });
+
+                            const totalTimeInMs = exitTime - entryTime;
+
+                            // Convert total time to hours, minutes, and seconds
+                            const totalHours = Math.floor(totalTimeInMs / (1000 * 60 * 60)); // Hours
+                            const totalMinutes = Math.floor((totalTimeInMs % (1000 * 60 * 60)) / (1000 * 60)); // Minutes
+                            const totalSeconds = Math.floor((totalTimeInMs % (1000 * 60)) / 1000); // Seconds
+
+                            // Format the time conditionally
+                            let formattedTotalTime = "";
+
+                            if (totalHours > 0) {
+                              formattedTotalTime += `${totalHours} h `;
+                            }
+
+                            if (totalMinutes > 0 || totalHours > 0) {
+                              formattedTotalTime += `${totalMinutes} min `;
+                            }
+
+                            formattedTotalTime += `${totalSeconds} sec`;
+
+                            indx++;
+                            const tableRow = document.createElement('div');
+
+
+                            tableRow.classList.add('grid', 'grid-cols-3', 'sm:grid-cols-12', 'border-b', 'border-stroke', 'dark:border-strokedark');
+
+                            // Serial Number
+                            const serial = document.createElement('div');
+                            serial.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5');
+                            serial.innerHTML = `<p class="text-[13px] font-bold text-[#015FC9] dark:text-white">${indx}</p>`;
+                            tableRow.appendChild(serial);
+
+                            // Passenger Name
+                            const passengerName = document.createElement('div');
+                            passengerName.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5');
+                            passengerName.innerHTML = `<p class="text-[13px] font-bold text-[#015FC9] dark:text-white">${userDoc.data().name}</p>`;
+                            tableRow.appendChild(passengerName);
+
+                            // Card Number
+                            const cardNumber = document.createElement('div');
+                            cardNumber.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5');
+                            cardNumber.innerHTML = `<p class="text-[13px] font-bold text-[#015FC9] dark:text-white">${userDoc.data().card_no}</p>`;
+                            tableRow.appendChild(cardNumber);
+
+                            // Entry Point
+                            const entryPoint = document.createElement('div');
+                            entryPoint.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            entryPoint.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${journeyData.entry_point.substring(0, 20) + "..."}</p>`;
+                            tableRow.appendChild(entryPoint);
+
+                            // Entry Time
+                            const entryTimeDiv = document.createElement('div');
+                            entryTimeDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            entryTimeDiv.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${formattedEntryTime2}</p>`;
+                            tableRow.appendChild(entryTimeDiv);
+
+                            // Exit Point
+                            const exitPoint = document.createElement('div');
+                            exitPoint.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            exitPoint.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${journeyData.exit_point.substring(0, 20) + "..."}</p>`;
+                            tableRow.appendChild(exitPoint);
+
+                            // Exit Time
+                            const exitTimeDiv = document.createElement('div');
+                            exitTimeDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            exitTimeDiv.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${formattedExitTime2}</p>`;
+                            tableRow.appendChild(exitTimeDiv);
+
+                            // Total Distance
+                            const totalDistance = document.createElement('div');
+                            totalDistance.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            totalDistance.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${journeyData.distance_travelled_km} KM</p>`;
+                            tableRow.appendChild(totalDistance);
+
+                            // Total Time
+                            const totalTimeDiv = document.createElement('div');
+                            totalTimeDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            totalTimeDiv.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${formattedTotalTime}</p>`;
+                            tableRow.appendChild(totalTimeDiv);
+
+                            // Fare per KM
+                            const farePerKm = document.createElement('div');
+                            farePerKm.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            farePerKm.innerHTML = `<p class="text-[13px] font-medium text-black dark:text-white">${journeyData.fpkm} BDT</p>`;
+                            tableRow.appendChild(farePerKm);
+
+                            // Fare
+                            const fareDiv = document.createElement('div');
+                            fareDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5', 'hidden', 'sm:block');
+                            fareDiv.innerHTML = `<p class="text-[13px] font-bold text-[#3CB043] dark:text-white">${journeyData.fare.toFixed(2)} BDT</p>`;
+                            tableRow.appendChild(fareDiv);
+
+                            // View Details Button
+                            // View Details Button
+                            const viewButton = document.createElement('button');
+                            viewButton.classList.add('rounded-lg', 'bg-[#015FC9]', 'px-3', 'py-1', 'text-sm', 'font-semibold', 'text-white', 'hover:bg-blue-800');
+                            viewButton.textContent = 'View Details';
+
+                            // Create a card to hold the detailed journey information
+                            const detailsCard = document.createElement('div');
+                            detailsCard.classList.add('col-span-12', 'round-full', 'p-5', 'bg-gray-100', 'dark:bg-meta-3', "hidden"); // Initially hidden
+                            detailsCard.style.marginTop = '10px'; // Add some space between the row and the details card
+
+                            // Populate the details card with journey details (you can customize this part)
+                            const detailsContent = `
+                               <div>
+                                <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Passenger Name:</strong> ${userDoc.data().name}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Card No:</strong> ${userDoc.data().card_no}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Entry Point:</strong> ${journeyData.entry_point}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Entry Time:</strong> ${formattedEntryTime}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Exit Point:</strong> ${journeyData.exit_point}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Exit Time:</strong> ${formattedExitTime}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Total Distance:</strong> ${journeyData.distance_travelled_km} KM
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Total Time:</strong> ${formattedTotalTime}
+    </p>
+    <p class="text-[15px] font-medium text-black dark:text-white">
+      <strong class="text-[#015FC9]">Fare per KM:</strong> ${journeyData.fpkm} BDT
+    </p>
+    <p class="text-[15px] font-medium text-[#3CB043] dark:text-white">
+      <strong class="text-[#015FC9]">Total Fare:</strong> ${journeyData.fare.toFixed(2)} BDT
+    </p>
+  </div>
+   <div>
+    <!-- Existing journey details -->
+    
+    <!-- Other details... -->
+
+    <!-- Add View Map button and map container -->
+    <div class="mt-4">
+      <button id="map-toggle-${journeyDoc.id}" class="rounded-lg bg-[#015FC9] px-3 py-1 text-sm font-semibold text-white hover:bg-blue-800">
+        View Map
+      </button>
+      <div id="map-container-${journeyDoc.id}" class="mt-4 hidden" style="height: 300px">
+        <div id="map-${journeyDoc.id}" class="h-full w-full rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+`;
+                            detailsCard.innerHTML = detailsContent;
+
+                            // Toggle the visibility of the details card on button click
+                            viewButton.onclick = () => {
+  if (detailsCard.classList.contains('hidden')) {
+    detailsCard.classList.remove('hidden');
+    viewButton.textContent = 'Hide Details';
+  } else {
+    detailsCard.classList.add('hidden');
+    viewButton.textContent = 'View Details';
+  }
+};
+
+// Add map toggle functionality
+const mapToggleButton = detailsCard.querySelector(`#map-toggle-${journeyDoc.id}`);
+const mapContainer = detailsCard.querySelector(`#map-container-${journeyDoc.id}`);
+
+mapToggleButton.onclick = () => {
+  if (mapContainer.classList.contains('hidden')) {
+    // Show map
+    mapContainer.classList.remove('hidden');
+    mapToggleButton.textContent = 'Hide Map';
+
+    // Initialize map if not already initialized
+    if (!mapContainer._mapInitialized) {
+      const pathCoordinates = journeyData.path.map(point => [point.lat, point.lon]);
+
+      const map = L.map(`map-${journeyDoc.id}`).setView(pathCoordinates[0], 13);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.polyline(pathCoordinates, { color: '#015FC9' }).addTo(map);
+
+      L.marker(pathCoordinates[0], {
+        icon: L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41]
+        })
+      }).addTo(map);
+
+      L.marker(pathCoordinates[pathCoordinates.length - 1], {
+        icon: L.icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41]
+        })
+      }).addTo(map);
+
+      // Mark map as initialized
+      mapContainer._mapInitialized = true;
+    } else {
+      // Refresh map if already initialized
+      const map = L.map(`map-${journeyDoc.id}`);
+      map.invalidateSize();
+    }
+  } else {
+    // Hide map
+    mapContainer.classList.add('hidden');
+    mapToggleButton.textContent = 'View Map';
+  }
+};
+
+                            // Append the view button and the details card to the row
+                            const viewButtonDiv = document.createElement('div');
+                            viewButtonDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5', 'xl:p-5');
+                            viewButtonDiv.appendChild(viewButton);
+                            tableRow.appendChild(viewButtonDiv);
+
+                            // Append the details card below the row, now spanning the full width
+                            tableRow.appendChild(detailsCard);
+
+                            // Append the row to the journey list
+                            document.querySelector('.journey-list').appendChild(tableRow);
+                          });
+                        });
+                      });
+                    });
+                  }
+
+                  // Call the function to load data
+                 
+                  fetchJourneys(selectedDate);
+
+ // Variable to store the selected date
+
+// Function to handle date selection
+function handleDateChange() {
+  const datePicker = document.getElementById("datePicker");
+  selectedDate = datePicker.value; // Store the selected date
+  console.log("Selected Date: ", selectedDate);
+  clearTable();
+  fetchJourneys(selectedDate); // Debugging
+  // You can use the selectedDate variable for further operations
+}
+
+// Function to handle "All" button click
+function handleShowAll() {
+  const datePicker = document.getElementById("datePicker");
+  selectedDate = null; // Clear the selected date
+  datePicker.value = ""; // Clear the date picker input field
+  console.log("All clicked. Date reset to: ", selectedDate);
+  clearTable();
+  fetchJourneys(selectedDate); // Debugging
+  // You can use the selectedDate variable for further operations (now it's null)
+}
+function clearTable() {
+  const journeyList = document.querySelector('.journey-list');
+  // Clear all previous rows before adding new ones
+  journeyList.innerHTML = '';
+}
+
+// Add event listener to the date picker
+document.getElementById("datePicker").addEventListener("change", handleDateChange);
+
+// Add event listener to the "All" button
+document.getElementById("showAll").addEventListener("click", handleShowAll);
+
+                </script>
+              </div>
+            </div>
+      </main>
+
+    </div>
+
+  </div>
+
+</body>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</html>

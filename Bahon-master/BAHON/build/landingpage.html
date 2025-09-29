@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahon - Smart Public Transport App</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bahon - Smart Public Transport App</title>
+        <!-- Google Fonts -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Montserrat:wght@500;700&display=swap"
+            rel="stylesheet">
+
+        <style>
+            /* General Styles */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                line-height: 1.6;
+                background-color: #f4f4f4;
+                color: #464646;
+            }
+
+            /* Navbar Styles */
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: rgb(26, 32, 130);
+                padding: 1rem 2rem;
+            }
+
+            .navbar .logo {
+                font-size: 1.8rem;
+                color: white;
+                font-weight: bold;
+            }
+
+            .navbar ul {
+                display: flex;
+                list-style-type: none;
+            }
+
+            .navbar ul li {
+                margin-left: 2rem;
+            }
+
+            .navbar ul li a {
+                color: white;
+                text-decoration: none;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .navbar ul li a:hover {
+                color: #ffbd43;
+            }
+
+            .navbar .join-btn {
+                background-color: #ffbd43;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+            }
+
+            .navbar .join-btn:hover {
+                background-color: #ffa600;
+                color: white;
+            }
+
+            /* Hero Section */
+            .hero {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                height: 100vh;
+                background: linear-gradient(to right, #052c7f, #0072ff);
+                color: white;
+                padding: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+                max-width: 800px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
+
+            /* Media Query for Mobile */
+            @media (max-width: 768px) {
+                .navbar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .navbar ul {
+                    flex-direction: column;
+                    margin-top: 1rem;
+                }
+
+                .navbar ul li {
+                    margin: 0.5rem 0;
+                }
+
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+
+                .hero p {
+                    font-size: 1rem;
+                }
+            }
+
+            .key-features {
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+                padding: 50px 20px;
+                flex-wrap: wrap;
+                background: linear-gradient(to bottom, #a0a0a0, #dadada);
+                /* Subtle gradient for background */
+                border-radius: 20px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                /* Soft shadow around the section */
+            }
+
+            /* Feature Box Styling */
+            .feature-box {
+                flex: 0 1 calc(33.333% - 30px);
+                /* Each box takes 1/3 width minus gap */
+                background: linear-gradient(to bottom right, #ffffff, #f0f8ff);
+                /* White to light blue gradient */
+                border-radius: 15px;
+                /* Smooth rounded corners */
+                padding: 30px;
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+                /* Soft shadow for depth */
+                text-align: center;
+                transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+            }
+
+            /* Hover Effect */
+            .feature-box:hover {
+                transform: translateY(-10px);
+                /* Lift effect */
+                box-shadow: 0 12px 30px rgba(0, 123, 255, 0.3);
+                /* Glow effect */
+                background: linear-gradient(to bottom right, #007bff, #0056b3);
+                /* Vibrant blue gradient on hover */
+                color: #ffffff;
+                /* Change text to white for contrast */
+            }
+
+            /* Heading Styling */
+            .feature-box h3 {
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin-bottom: 15px;
+                color: #007bff;
+                /* Vibrant blue color */
+                transition: color 0.4s ease;
+            }
+
+            .feature-box:hover h3 {
+                color: #ffffff;
+                /* White heading on hover */
+            }
+
+            /* Paragraph Styling */
+            .feature-box p {
+                font-size: 1rem;
+                color: #555;
+                margin-bottom: 20px;
+                transition: color 0.4s ease;
+            }
+
+            .feature-box:hover p {
+                color: #ffffff;
+                /* White paragraph text on hover */
+            }
+
+            /* Button Styling */
+            .feature-box a {
+                display: inline-block;
+                padding: 12px 25px;
+                background: linear-gradient(to right, #007bff, #0056b3);
+                /* Blue gradient for button */
+                color: white;
+                text-decoration: none;
+                border-radius: 30px;
+                /* Fully rounded button */
+                font-size: 1rem;
+                font-weight: 600;
+                transition: background-color 0.4s ease, transform 0.3s ease;
+            }
+
+            .feature-box a:hover {
+                background: linear-gradient(to right, #0056b3, #003f7f);
+                /* Darker blue on hover */
+                transform: scale(1.05);
+                /* Slightly enlarge button on hover */
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .feature-box {
+                    flex: 0 1 calc(50% - 30px);
+                    /* Two boxes per row on tablets */
+                }
+            }
+
+            @media (max-width: 480px) {
+                .feature-box {
+                    flex: 0 1 100%;
+                    /* Full-width boxes on small screens */
+                }
+            }
+        </style>
+    <link href="style.css" rel="stylesheet"></head>
+
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <img src="src/images/product/blogovsg.svg" alt="Logo" style="
+            height: 40px; /* Adjust the size of the logo */
+            width: auto; /* Maintain aspect ratio */
+        ">
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#join">Join</a></li>
+            <li><a href="signin.html" class="join-btn">Admin Login</a></li>
+
+        </ul>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" style="
+    position: relative; /* Allow positioning of child elements */
+    display: flex;
+    align-items: center; /* Align text and image vertically */
+    height: 100vh;
+    background: linear-gradient(to right, #052c7f, #0072ff); /* Background gradient */
+    color: white;
+    padding: 2rem;
+">
+        <!-- App Image -->
+        <img src="src/images/product/app_img.svg" height="50px" alt="App Image" style="
+        position: absolute;
+        left: 150px; /* Add gap between image and border */
+        bottom: 50px; /* Align image to the bottom */
+        height: 90%; /* Adjust the size */
+        z-index: 1; /* Place image behind the text */
+        opacity: 0.9; /* Slight transparency for the image */
+    ">
+
+        <div style="
+        position: relative;
+        z-index: 2; /* Place text above the image */
+        max-width: 600px; /* Limit text width */
+        text-align: left; /* Align text to the left */
+        padding-left: 60px; /* Add spacing to avoid text fully covering the image */
+    ">
+            <h1 style="
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        ">Discover the Future of Public Transportation</h1>
+            <p style="
+            font-size: 1.2rem;
+            line-height: 1.6;
+        ">Revolutionizing mobility with Bahon – A smart public transport app.</p>
+            <a href="#about" class="cta-btn" style="
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #f5c800, #ff5a1e);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite; /* Smooth infinite animation */
+        ">Learn More</a>
+        </div>
+
+        <style>
+            @keyframes gradientShift {
+                0% {
+                    background-position: 0% 50%;
+                }
+
+                50% {
+                    background-position: 100% 50%;
+                }
+
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+        </style>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about" style="
+    padding: 80px 20px;
+    background: linear-gradient(to bottom, #ffffff, #e6e6e6); /* White to gray gradient */
+    text-align: center;
+">
+        <h2 style="
+            font-size: 2.5rem;
+            color: #1F3A5A;
+            font-weight: 700;
+            margin-bottom: 20px;
+        ">What is Bahon?</h2>
+        <p style="
+        text-align: justify;
+            font-size: 1.2rem;
+            color: #08055c;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        ">
+            <br>
+            <br>
+
+
+            The project focuses on developing an Iot and Embedded system based software for Smart Transportation. The
+            main objective of the project is to automate several processes of public transportation and enhance the
+            passenger experience. Each passenger will have a smart card that they have to scan entering and exiting the
+            bus. The system will automatically calculate the travel distance and corresponding fare which will be
+            deducted from their account at the point of exit. If a passenger forgets to carry a Smart card he/she can
+            scan a temporary QR code generated from the app. The project will feature a user app and an admin panel. The
+            user app will offer functionalities such as travel history, balance checking and recharging, journey
+            planning, fare calculation, notifications, profile setting, and report issues. The admin panel will include
+            a dashboard, revenue reports, user management, journey data analysis, fare adjustment and maintenance. For
+            implementation of the software, We use an object-oriented software architecture. Key components will include
+            classes for passengers, cards, entry and exit points, journeys, fare calculation, and overall system
+            control. The software will handle real-time fare calculation, balance updates, and travel history. For the
+            implementation hardware, we will use smart card readers, microcontrollers like Arduino for processing data,
+            GPS and IOT devices. Bypass solution in our project ensures seamless operation and user convenience in
+            various scenarios. If a passenger forgets their smart card, they can generate a temporary QR code through
+            our mobile app for scanning at entry and exit points. For forgotten exit scans, the system calculates fares
+            based on estimated maximum distance.
+        </p>
+    </section>
+  
+    <!-- Features Section -->
+
+
+    <section class="key-features">
+        <h2 style="
+        font-size: 2.5rem;
+        color: #1F3A5A;
+        font-weight: 700;
+        text-align: center; /* Center the title */
+        margin-bottom: 20px;
+    ">Key Features</h2>
+        <section class="key-features">
+            <div class="feature-box">
+                <h3>Admin Portal</h3>
+                <p>Manage and oversee the entire transportation system with ease using the admin portal. It allows
+                    administrators to configure settings, monitor real-time data, and manage user access.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Dashboard</h3>
+                <p>Get an overview of all key metrics and insights in a clean, intuitive dashboard. Visualize system
+                    performance, usage statistics, and operational trends with powerful data visualization tools.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Revenue Reports</h3>
+                <p>Track and analyze revenue from ticket sales, subscriptions, and other streams. Generate reports to
+                    understand financial trends and optimize pricing strategies.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>User Management</h3>
+                <p>Efficiently manage users, including drivers, passengers, and administrators. Create user profiles,
+                    assign
+                    roles, and handle permissions from one centralized location.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Journey Data</h3>
+                <p>Monitor and analyze journey data in real-time, including routes, distances, and travel times. Use
+                    this
+                    data for optimization and planning of transportation routes and schedules.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Fare Adjustment</h3>
+                <p>Set and adjust fares dynamically based on demand, route, or time of day. Implement promotions,
+                    discounts,
+                    and flexible pricing strategies to improve user engagement.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Maintenance Scheduling</h3>
+                <p>Schedule and track maintenance activities for vehicles and infrastructure. Keep the fleet in optimal
+                    condition and minimize downtime by automating routine tasks.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Issue Reporting</h3>
+                <p>Allow users and staff to report issues easily, from broken vehicles to operational delays. Track
+                    progress
+                    and resolution to ensure efficient problem-solving and system reliability.</p>
+            </div>
+        </section>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technologies" class="technologies" style="
+        padding: 80px 20px;
+        background-color: #f9f9f9;
+        text-align: center;
+    ">
+        <h2 style="
+            font-size: 2.5rem;
+            color: #1F3A5A;
+            font-weight: 700;
+            margin-bottom: 20px;
+        ">Technologies We Use</h2>
+        <p style="
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        ">
+            Bahon combines advanced hardware and cloud technologies to deliver seamless performance:
+        </p>
+        <ul style="
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.8;
+        ">
+            <li><strong>ESP32 Microcontroller:</strong> Manages hardware and server communication.</li>
+            <li><strong>GPS Module:</strong> Provides real-time location tracking.</li>
+            <li><strong>RFID/NFC Scanner:</strong> Enables cashless entry and exit tracking.</li>
+            <li><strong>Firebase Realtime Database:</strong> Ensures smooth data synchronization.</li>
+            <li><strong>Node.js:</strong> Powers the backend logic.</li>
+        </ul>
+    </section>
+<script defer src="bundle.js"></script></body>
+
+</html>

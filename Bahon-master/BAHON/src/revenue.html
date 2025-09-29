@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahon - Revenue Report</title>
+</head>
+
+<body
+  x-data="{ page: 'tables', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+  x-init="
+          darkMode = JSON.parse(localStorage.getItem('darkMode'));
+          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+  :class="{'dark text-bodydark bg-[#DCE8FE]': darkMode === true}">
+
+  <!-- ===== Preloader Start ===== -->
+  <include src="./partials/preloader.html"></include>
+  <!-- ===== Preloader End ===== -->
+
+  <!-- ===== Page Wrapper Start ===== -->
+  <div class="flex h-screen overflow-hidden">
+    <!-- ===== Sidebar Start ===== -->
+    <include src="./partials/sidebar.html"></include>
+    <!-- ===== Sidebar End ===== -->
+
+    <!-- ===== Content Area Start ===== -->
+    <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+      <!-- ===== Header Start ===== -->
+      <include src="./partials/header.html" />
+      <!-- ===== Header End ===== -->
+
+      <!-- ===== Main Content Start ===== -->
+      <main>
+        <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+          <!-- Breadcrumb Start -->
+          <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-title-md2 font-bold text-black dark:text-white">
+              Revenue Report
+            </h2>
+          </div>
+          <!-- Breadcrumb End -->
+
+          <!-- ====== Monthly Revenue Table Start ===== -->
+  
+<div class="rounded-[20px] border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+  <h4 class="mb-6 text-xl font-bold text-black dark:text-white w-full text-left">Monthly Revenue Report</h4>
+  <div class="overflow-x-auto">
+      <div class="grid grid-cols-12 gap-2 rounded-[5px] bg-gray text-black dark:bg-meta-4 sm:grid-cols-12 sm:gap-2">
+          <!-- Month Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Month</h5>
+          </div>
+          <!-- Total Journeys Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Journeys</h5>
+          </div>
+          <!-- Total Revenue Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Revenue</h5>
+          </div>
+          <!-- Avg Revenue per Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Avg Revenue per<br>Journey</h5>
+          </div>
+          <!-- Highest Revenue Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Highest Revenue<br>Journey</h5>
+          </div>
+          <!-- Lowest Revenue Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Lowest Revenue<br>Journey</h5>
+          </div>
+      </div>
+
+      <div class="monthly-revenue">
+          <!-- Monthly Revenue rows will be added dynamically here from Firebase -->
+      </div>
+  </div>
+</div>
+
+<!-- ====== Yearly Revenue Table Start ===== -->
+<div class="rounded-[20px] border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+  <h4 class="mb-6 text-xl font-bold text-black dark:text-white w-full text-left">Yearly Revenue Report</h4>
+  <div class="overflow-x-auto">
+      <div class="grid grid-cols-12 gap-2 rounded-[5px] bg-gray text-black dark:bg-meta-4 sm:grid-cols-12 sm:gap-2">
+          <!-- Year Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Year</h5>
+          </div>
+          <!-- Total Journeys Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Journeys</h5>
+          </div>
+          <!-- Total Revenue Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Revenue</h5>
+          </div>
+          <!-- Avg Revenue per Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Avg Revenue <br>per Journey</h5>
+          </div>
+          <!-- Highest Revenue Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Highest Revenue<br>Journey</h5>
+          </div>
+          <!-- Lowest Revenue Journey Column -->
+          <div class="p-2 text-center col-span-2 sm:col-span-2 md:col-span-2">
+              <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Lowest Revenue<br>Journey</h5>
+          </div>
+      </div>
+
+      <div class="yearly-revenue">
+          <!-- Yearly Revenue rows will be added dynamically here from Firebase -->
+      </div>
+  </div>
+</div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js';
+    import { getFirestore, collection, query, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js';
+
+    // Firebase Configuration
+    const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
+};
+
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function fetchRevenueData() {
+      const usersRef = collection(db, 'users');
+
+      // Listen to changes in the 'users' collection
+      onSnapshot(usersRef, (querySnapshot) => {
+        const monthlyRevenue = {};
+        const yearlyRevenue = {};
+
+        querySnapshot.forEach((userDoc) => {
+          const journeysRef = collection(userDoc.ref, 'journeys');
+          const q = query(journeysRef, orderBy('entry_time._seconds', 'desc'));
+
+          onSnapshot(q, (journeySnapshot) => {
+            journeySnapshot.forEach(async (journeyDoc) => {
+              const journeyData = journeyDoc.data();
+
+              const fare = journeyData.fare;
+              const entryTime = new Date(journeyData.entry_time._seconds * 1000);
+              const month = entryTime.getMonth(); // 0 - 11 for months
+              const year = entryTime.getFullYear();
+              const formattedMonth = entryTime.toLocaleString('en-US', {
+               month: 'long',
+               year: 'numeric',
+              }).replace(/ /g, '-');
+              // For Monthly Revenue
+              if (!monthlyRevenue[formattedMonth]) {
+                monthlyRevenue[formattedMonth] = {
+                  totalJourneys: 0,
+                  totalRevenue: 0,
+                  highestRevenue: 0,
+                  lowestRevenue: Infinity,
+                };
+              }
+
+              const monthData = monthlyRevenue[formattedMonth];
+              monthData.totalJourneys++;
+              monthData.totalRevenue += fare;
+              monthData.highestRevenue = Math.max(monthData.highestRevenue, fare);
+              monthData.lowestRevenue = Math.min(monthData.lowestRevenue, fare);
+
+              // For Yearly Revenue
+              if (!yearlyRevenue[year]) {
+                yearlyRevenue[year] = {
+                  totalJourneys: 0,
+                  totalRevenue: 0,
+                  highestRevenue: 0,
+                  lowestRevenue: Infinity,
+                };
+              }
+
+              const yearData = yearlyRevenue[year];
+              yearData.totalJourneys++;
+              yearData.totalRevenue += fare;
+              yearData.highestRevenue = Math.max(yearData.highestRevenue, fare);
+              yearData.lowestRevenue = Math.min(yearData.lowestRevenue, fare);
+
+              // Update both tables
+              updateMonthlyRevenueTable(monthlyRevenue);
+              updateYearlyRevenueTable(yearlyRevenue);
+            });
+          });
+        });
+      });
+    }
+
+    function updateMonthlyRevenueTable(data) {
+      const table = document.querySelector('.monthly-revenue');
+      table.innerHTML = ''; // Clear previous data
+
+      for (const month in data) {
+        const revenue = data[month];
+        const row = document.createElement('div');
+        row.classList.add('grid', 'grid-cols-6', 'gap-1', 'border-b', 'border-stroke', 'dark:border-strokedark');
+
+        // Month
+        const monthDiv = document.createElement('div');
+        monthDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        monthDiv.innerHTML = `<p class="text-[13px] font-bold text-[#015FC9] dark:text-white">${month}</p>`;
+        row.appendChild(monthDiv);
+
+        // Total Journeys
+        const totalJourneysDiv = document.createElement('div');
+        totalJourneysDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        totalJourneysDiv.innerHTML = `<p class="text-[13px] font-bold text-[#3CB043] dark:text-white">${revenue.totalJourneys}</p>`;
+        row.appendChild(totalJourneysDiv);
+
+        // Total Revenue
+        const totalRevenueDiv = document.createElement('div');
+        totalRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        totalRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#3CB043] dark:text-white">৳ ${revenue.totalRevenue.toFixed(2)}</p>`;
+        row.appendChild(totalRevenueDiv);
+
+        // Avg Revenue per Journey
+        const avgRevenue = (revenue.totalRevenue / revenue.totalJourneys).toFixed(2);
+        const avgRevenueDiv = document.createElement('div');
+        avgRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        avgRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${avgRevenue}</p>`;
+        row.appendChild(avgRevenueDiv);
+
+        // Highest Revenue Journey
+        const highestRevenueDiv = document.createElement('div');
+        highestRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        highestRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${revenue.highestRevenue.toFixed(2)}</p>`;
+        row.appendChild(highestRevenueDiv);
+
+        // Lowest Revenue Journey
+        const lowestRevenueDiv = document.createElement('div');
+        lowestRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        lowestRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${revenue.lowestRevenue.toFixed(2)}</p>`;
+        row.appendChild(lowestRevenueDiv);
+
+        table.appendChild(row);
+      }
+    }
+
+    function updateYearlyRevenueTable(data) {
+      const table = document.querySelector('.yearly-revenue');
+      table.innerHTML = ''; // Clear previous data
+
+      for (const year in data) {
+        const revenue = data[year];
+        const row = document.createElement('div');
+        row.classList.add('grid', 'grid-cols-6', 'gap-1', 'border-b', 'border-stroke', 'dark:border-strokedark');
+
+        // Year
+        const yearDiv = document.createElement('div');
+        yearDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        yearDiv.innerHTML = `<p class="text-[13px] font-bold text-[#015FC9] dark:text-white">${year}</p>`;
+        row.appendChild(yearDiv);
+
+        // Total Journeys
+        const totalJourneysDiv = document.createElement('div');
+        totalJourneysDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        totalJourneysDiv.innerHTML = `<p class="text-[13px] font-bold text-[#3CB043] dark:text-white">${revenue.totalJourneys}</p>`;
+        row.appendChild(totalJourneysDiv);
+
+        // Total Revenue
+        const totalRevenueDiv = document.createElement('div');
+        totalRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        totalRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#3CB043] dark:text-white">৳ ${revenue.totalRevenue.toFixed(2)}</p>`;
+        row.appendChild(totalRevenueDiv);
+
+        // Avg Revenue per Journey
+        const avgRevenue = (revenue.totalRevenue / revenue.totalJourneys).toFixed(2);
+        const avgRevenueDiv = document.createElement('div');
+        avgRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        avgRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${avgRevenue}</p>`;
+        row.appendChild(avgRevenueDiv);
+
+        // Highest Revenue Journey
+        const highestRevenueDiv = document.createElement('div');
+        highestRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        highestRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${revenue.highestRevenue.toFixed(2)}</p>`;
+        row.appendChild(highestRevenueDiv);
+
+        // Lowest Revenue Journey
+        const lowestRevenueDiv = document.createElement('div');
+        lowestRevenueDiv.classList.add('flex', 'items-center', 'justify-center', 'p-2.5');
+        lowestRevenueDiv.innerHTML = `<p class="text-[13px] font-bold text-[#E98074] dark:text-white">৳ ${revenue.lowestRevenue.toFixed(2)}</p>`;
+        row.appendChild(lowestRevenueDiv);
+
+        table.appendChild(row);
+      }
+    }
+
+    fetchRevenueData(); // Fetch the data from Firebase
+  </script>
+</body>
+
+</html>

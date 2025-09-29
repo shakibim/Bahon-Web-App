@@ -1,0 +1,195 @@
+<div class="rounded-[20px] border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+  <h4 class="mb-6 text-xl font-bold text-black dark:text-white">Journey List</h4>
+
+  <div class="flex flex-col">
+    <!-- Table Header -->
+    <div class="overflow-x-auto">
+      <div class="grid grid-cols-3 gap-1 rounded-[5px] bg-gray text-black dark:bg-meta-4 sm:grid-cols-12 sm:gap-2">
+        <div class="p-2 text-center">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Serial</h5>
+        </div>
+        <div class="p-2 text-center">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Passenger Name</h5>
+        </div>
+        <div class="p-2 text-center">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Card Number</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Entry Point</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Entry Time</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Exit Point</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Exit Time</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Distance</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Total Time</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Fare per KM</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm">Fare</h5>
+        </div>
+        <div class="p-2 text-center hidden sm:block">
+          <h5 class="text-xs font-bold text-[#015FC9] sm:text-sm"></h5>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Row -->
+    <div class="grid grid-cols-3 sm:grid-cols-12 border-b border-stroke dark:border-strokedark">
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white"">01</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white"">Shakib Imran</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white" " >1234567890</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">380/1, ডি আই টি সড়ক...</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" " >November 29, 2024 3:43:24 PM </p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">380/1, ডি আই টি সড়ক...</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">November 29, 2024 4:01:24 PM</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">0.32 KM</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">18 min</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">20 BDT</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">6.4 BDT</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <button class="rounded-lg bg-[#015FC9] px-3 py-1 text-sm font-semibold text-white hover:bg-blue-800" onclick="toggleDetails(1)" id="toggle-1">View Details</button>
+      </div>
+    </div>
+
+    <!-- Hidden Details Row -->
+    <div id="details-1" class="hidden bg-gray-100 p-4 rounded-lg">
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Entry Point:</strong> 380/1, ডি আই টি সড়ক, পশ্চিম হাজিপাড়া, নয়াটোলা, মগবাজার, ঢাকা, ঢাকা মহানগর, ঢাকা জেলা, ঢাকা বিভাগ, 1219, বাংলাদেশ
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Entry Time:</strong> November 29, 2024 at 3:43:24 PM UTC+6
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Exit Point:</strong> 380/1, ডি আই টি সড়ক, পশ্চিম হাজিপাড়া, নয়াটোলা, মগবাজার, ঢাকা, ঢাকা মহানগর, ঢাকা জেলা, ঢাকা বিভাগ, 1219, বাংলাদেশ
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Exit Time:</strong> November 29, 2024 at 4:01:24 PM UTC+6
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Total Distance:</strong> 0.32 KM
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Total Time:</strong> 18 min
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Fare per KM:</strong> 20 BDT
+      </p>
+      <p class="text-[15px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">Total Fare:</strong> 6.4 BDT
+      </p>
+    </div>
+
+    <div class="grid grid-cols-3 sm:grid-cols-12 border-b border-stroke dark:border-strokedark">
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white"">2</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white"">Shakib Imran</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <p class="text-[13px] font-medium text-black dark:text-white" " >1234567890</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">380/1, ডি আই টি সড়ক...</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" " >November 29, 2024 3:43:24 PM</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">380/1, ডি আই টি সড়ক...</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white" ">November 29, 2024 4:01:24 </p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">0.32 KM</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">18 min</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">20 BDT</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5 hidden sm:block">
+        <p class="text-[13px] font-medium text-black dark:text-white"">6.4 BDT</p>
+      </div>
+      <div class="flex items-center justify-center p-2.5 xl:p-5">
+        <button class="rounded-lg bg-[#015FC9] px-3 py-1 text-sm font-semibold text-white hover:bg-blue-800" onclick="toggleDetails(2)" id="toggle-1">View Details</button>
+      </div>
+    </div>
+
+    <!-- Hidden Details Row -->
+    <div id="details-2" class="hidden bg-gray-100 p-4 rounded-lg">
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Entry Point:</strong> 380/1, ডি আই টি সড়ক, পশ্চিম হাজিপাড়া, নয়াটোলা, মগবাজার, ঢাকা, ঢাকা মহানগর, ঢাকা জেলা, ঢাকা বিভাগ, 1219, বাংলাদেশ
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Entry Time:</strong> November 29, 2024 at 3:43:24 PM UTC+6
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Exit Point:</strong> 380/1, ডি আই টি সড়ক, পশ্চিম হাজিপাড়া, নয়াটোলা, মগবাজার, ঢাকা, ঢাকা মহানগর, ঢাকা জেলা, ঢাকা বিভাগ, 1219, বাংলাদেশ
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Exit Time:</strong> November 29, 2024 at 4:01:24 PM UTC+6
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Total Distance:</strong> 0.32 KM
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Total Time:</strong> 18 min
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Fare per KM:</strong> 20 BDT
+      </p>
+      <p class="text-[13px] font-medium text-black dark:text-white"">
+        <strong class="text-[#015FC9]">▣ Total Fare:</strong> 6.4 BDT
+      </p>
+    </div>
+</div>
+
+<script>
+  function toggleDetails(rowId) {
+    const details = document.getElementById(`details-${rowId}`);
+    const toggleButton = document.getElementById(`toggle-${rowId}`);
+    if (details.classList.contains("hidden")) {
+      details.classList.remove("hidden");
+      toggleButton.textContent = "Hide Details";
+    } else {
+      details.classList.add("hidden");
+      toggleButton.textContent = "View Details";
+    }
+  }
+</script>
